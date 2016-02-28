@@ -1,0 +1,38 @@
+﻿body {
+    padding-top: 60px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+.row.small {
+    width:40%;
+}
+.row {
+    margin:5px;
+    width:100%;
+}
+.row label {
+    width:200px;
+    text-align:left;
+}
+.submit{
+    width:100px;
+    margin:auto;
+}
+.small {
+    width:200px;
+}
+.dropdown{
+    width: 140px;
+    margin:auto;
+    margin-bottom:10px;
+}
+.form-control{
+    height: inherit;
+}

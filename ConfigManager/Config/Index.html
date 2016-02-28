@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Config Manager</title>
+    <meta charset="utf-8" />
+    <link href="/Content/bootstrap.css" rel="stylesheet" />
+    <link href="/Content/Site.css" rel="stylesheet" />
+
+    <script src="/scripts/angular.js"></script>
+    <script src="/scripts/angular-resource.js"></script>
+    <script src="/scripts/angular-mocks.js"></script>
+    <script src="/scripts/angular-route.js"></script>
+
+    <script src="js/ConfigModel.js"></script>
+    <script src="js/configService.js"></script>
+    <script src="js/configController.js"></script>
+    <script src="js/application.js"></script>
+</head>
+
+<body ng-app="ConfigMgr">
+    <div class="navbar navbar-default navbar-fixed-top">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div class="container">
+            <div class="navbar-header">
+
+                <a class="navbar-brand">Config Manager</a>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content" ng-controller="configController as vm">
+        <div class="dropdown">
+            <select class="form-control" ng-change="vm.SelectFile()" ng-model="vm.ConfigModel.Name" ng-options="file for file in vm.File">
+            </select>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">App Settings</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="input-group row small" ng-repeat="appSettings in vm.ConfigModel.AppSettings">
+                    <label data-ng-bind="appSettings.Name" ng-init="appSettings.ShowInput=false" id="name" class="input-group-addon"></label>
+                    <label ng-class="appSettings.ShowInput?'hide':'show'" class="form-control"  data-ng-click="appSettings.ShowInput=true" data-ng-bind="appSettings.Value"></label>
+                    <input type="text" class="form-control" ng-class="appSettings.ShowInput?'show':'hide'" aria-describedby="name" data-ng-model="appSettings.Value">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Connection Strings</h3>
+            </div>
+            <div class="panel-body">
+                <div class="input-group row" ng-repeat="connStrings in vm.ConfigModel.ConnectionStrings">
+                    <label data-ng-bind="connStrings.Name" ng-init="connStrings.ShowInput=false" id="name" class="input-group-addon"></label>
+                    <label ng-class="connStrings.ShowInput?'hide':'show'" class="form-control"  data-ng-click="connStrings.ShowInput=true" data-ng-bind="connStrings.Value"></label>
+                    <input type="text" ng-class="connStrings.ShowInput?'show':'hide'" class="form-control" aria-describedby="name" data-ng-model="connStrings.Value">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="submit">
+            <button type="submit" class="btn btn-success" ng-click="vm.SaveConfig()">Save</button>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
