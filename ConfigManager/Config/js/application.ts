@@ -1,5 +1,5 @@
 module ConfigMgr {
     angular.module('ConfigMgr',['ngResource'])
-    .service('dataAccessService',ConfigService)
+    .service('configService',ConfigService)
     .controller("configController",ConfigController);
 }

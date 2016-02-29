@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -50,7 +51,7 @@ namespace ConfigManager.Controllers
             var endPoint = (ClientSection)config.GetSection("system.serviceModel/client");
             foreach (ChannelEndpointElement ep in endPoint.Endpoints)
             {
-
+                
             }
             return this.Request.CreateResponse(HttpStatusCode.OK, configModel);
         }
@@ -66,9 +67,17 @@ namespace ConfigManager.Controllers
             {
                 section.ConnectionStrings[connString.Name].ConnectionString = connString.Value;
             }
-
+            var settings = config.AppSettings.Settings;
+            foreach (KeyValueConfigurationElement st in settings)
+            {
+                var key = configModel.AppSettings.FirstOrDefault(p => p.Name == st.Key);
+                if (key != null)
+                    st.Value = key.Value;
+            }
             config.Save();
-
+            var resetFile = ConfigurationManager.AppSettings["Reset"];
+            if (string.IsNullOrEmpty(resetFile)==false)
+                Process.Start(resetFile);
             return this.Request.CreateResponse(HttpStatusCode.OK);
         }
     }

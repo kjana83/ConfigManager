@@ -4,7 +4,10 @@ module ConfigMgr {
         ConfigModel : ConfigMgr.ConfigModel
         SelectFile(): void;
         SaveConfig(): void;
-        dataAccessService:ConfigMgr.ConfigService;
+        Reset():void;
+        RestartSite():void;
+        ClearCache():void;
+        configService:ConfigMgr.ConfigService;
     }
 
     export class ConfigController implements IConfigModel {
@@ -12,9 +15,9 @@ module ConfigMgr {
         File: any[];
         ConfigModel : ConfigMgr.ConfigModel;
         
-        static $inject = ["dataAccessService"];
-        constructor(public dataAccessService:ConfigMgr.ConfigService) {
-            var resource = this.dataAccessService.getConfigData();
+        static $inject = ["configService"];
+        constructor(public configService:ConfigMgr.ConfigService) {
+            var resource = this.configService.configData();
             resource.get({Name:"Papillon"},(data:ConfigMgr.ConfigModel)=>{
                 this.ConfigModel = data;
             });
@@ -22,17 +25,36 @@ module ConfigMgr {
         }
 
         SelectFile() {
-            var resource = this.dataAccessService.getConfigData();
+            var resource = this.configService.configData();
             resource.get({Name:this.ConfigModel.Name},(data:ConfigMgr.ConfigModel)=>{
                 this.ConfigModel = data;
             });
         }
         
         SaveConfig(){
-            var resource = this.dataAccessService.setConfigData();
+            var resource = this.configService.configData();
             resource.save(this.ConfigModel,
-            ()=>{console.log('Success')},
+            ()=>{console.log('Success');this.Reset()},
             ()=>{console.log('Failure')});
+        }
+        
+        Reset(){
+            this.ConfigModel.AppSettings.forEach(setting => {
+                setting.ShowInput = false;
+            });
+            
+            this.ConfigModel.ConnectionStrings.forEach(setting => {
+                setting.ShowInput = false;
+            });
+        }
+        
+        RestartSite(){
+            var resource = this.configService.configTask();
+            resource.save({"Name":"RestartIIS"});
+        }
+        ClearCache(){
+            var resource = this.configService.configTask();
+            resource.save({"Name":"ClearCache"});
         }
     }
 }

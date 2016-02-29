@@ -5,11 +5,11 @@ var ConfigMgr;
             if ($resource === void 0) { $resource = ng.resource.IResourceService; }
             this.$resource = $resource;
         }
-        ConfigService.prototype.getConfigData = function () {
+        ConfigService.prototype.configData = function () {
             return this.$resource('/api/Config/:Name');
         };
-        ConfigService.prototype.setConfigData = function () {
-            return this.$resource('/api/Config');
+        ConfigService.prototype.configTask = function () {
+            return this.$resource('/api/Task');
         };
         ConfigService.$inject = ["$resource"];
         return ConfigService;

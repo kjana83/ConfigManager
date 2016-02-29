@@ -65,12 +65,14 @@
                 </div>
             </div>
         </div>
-        <div class="submit">
-            <button type="submit" class="btn btn-success" ng-click="vm.SaveConfig()">Save</button>
+        <div class="well">
+            <button type="submit" class="btn btn-success"  ng-click="vm.SaveConfig()">Save</button>
+        
+            <button type="button" class="btn btn-info" style="margin-left:450px;" ng-click="vm.RestartSite()">Reset IIS</button>
+      
+            <button type="button" class="btn btn-warning" style="float:right" ng-click="vm.ClearCache()">Clear Cache</button>
         </div>
     </div>
-
-
 </body>
 
 </html>
