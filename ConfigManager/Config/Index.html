@@ -39,6 +39,20 @@
         </div>
         <div class="panel panel-primary">
             <div class="panel-heading">
+                <h3 class="panel-title">End Points</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="input-group row" ng-repeat="endPoint in vm.ConfigModel.EndPoints">
+                    <label data-ng-bind="endPoint.Name" ng-init="endPoint.ShowInput=false" id="name" class="input-group-addon"></label>
+                    <label ng-class="endPoint.ShowInput?'hide':'show'" class="form-control"  data-ng-click="endPoint.ShowInput=true" data-ng-bind="endPoint.Value"></label>
+                    <input type="text" class="form-control" ng-class="endPoint.ShowInput?'show':'hide'" aria-describedby="name" data-ng-model="endPoint.Value">
+                </div>
+
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
                 <h3 class="panel-title">App Settings</h3>
             </div>
             <div class="panel-body">

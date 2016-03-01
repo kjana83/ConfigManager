@@ -46,6 +46,10 @@ module ConfigMgr {
             this.ConfigModel.ConnectionStrings.forEach(setting => {
                 setting.ShowInput = false;
             });
+            
+            this.ConfigModel.EndPoints.forEach(setting => {
+                setting.ShowInput = false;
+            });
         }
         
         RestartSite(){

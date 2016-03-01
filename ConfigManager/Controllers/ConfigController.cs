@@ -1,4 +1,5 @@
-﻿using ConfigManager.Models;
+﻿using System.IO;
+using ConfigManager.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -21,11 +22,12 @@ namespace ConfigManager.Controllers
             {
                 ConnectionStrings = new List<KeyValueModel>(),
                 AppSettings = new List<KeyValueModel>(),
+                EndPoints = new List<KeyValueModel>(),
                 Name= name
             };
 
             var fileName = ConfigurationManager.AppSettings[name];
-            var config = WebConfigurationManager.OpenWebConfiguration(fileName);
+            var config = ConfigController.OpenConfigFile(fileName); // WebConfigurationManager.OpenWebConfiguration(fileName);
 
             var section = (ConnectionStringsSection)config.GetSection("connectionStrings");
             var count = section.ConnectionStrings.Count;
@@ -51,7 +53,11 @@ namespace ConfigManager.Controllers
             var endPoint = (ClientSection)config.GetSection("system.serviceModel/client");
             foreach (ChannelEndpointElement ep in endPoint.Endpoints)
             {
-                
+                configModel.EndPoints.Add(new KeyValueModel
+                                              {
+                                                  Name = ep.Name,
+                                                  Value = ep.Address.ToString()
+                                              });
             }
             return this.Request.CreateResponse(HttpStatusCode.OK, configModel);
         }
@@ -60,7 +66,7 @@ namespace ConfigManager.Controllers
         {
             var fileName = ConfigurationManager.AppSettings[configModel.Name];
 
-            var config = WebConfigurationManager.OpenWebConfiguration(fileName);
+            var config = ConfigController.OpenConfigFile(fileName); ;
             var section = (ConnectionStringsSection)config.GetSection("connectionStrings");
             
             foreach(var connString in configModel.ConnectionStrings)
@@ -74,11 +80,34 @@ namespace ConfigManager.Controllers
                 if (key != null)
                     st.Value = key.Value;
             }
+
+            var endPoint = (ClientSection)config.GetSection("system.serviceModel/client");
+            foreach (ChannelEndpointElement ep in endPoint.Endpoints)
+            {
+                var key = configModel.EndPoints.FirstOrDefault(p => p.Name == ep.Name);
+                if (key !=null)
+                    ep.Address=new Uri(key.Value);
+            }
+
             config.Save();
             var resetFile = ConfigurationManager.AppSettings["Reset"];
             if (string.IsNullOrEmpty(resetFile)==false)
                 Process.Start(resetFile);
             return this.Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        private static Configuration OpenConfigFile(string physicalPath)
+        {
+            string dummyVirtualPath = "/MyApp";
+            WebConfigurationFileMap map = new WebConfigurationFileMap();
+            map.VirtualDirectories.Add(dummyVirtualPath, new VirtualDirectoryMapping(physicalPath, true));
+            return WebConfigurationManager.OpenMappedWebConfiguration(map, dummyVirtualPath,"Dummy");
+
+            //var configFile = new FileInfo(configPath);
+            //var vdm = new VirtualDirectoryMapping(configFile.DirectoryName, true, configFile.Name);
+            //var wcfm = new WebConfigurationFileMap();
+            //wcfm.VirtualDirectories.Add("/", vdm);
+            //return WebConfigurationManager.OpenMappedWebConfiguration(wcfm, "/", "PruHealth.Papillon.Web");
         }
     }
 }

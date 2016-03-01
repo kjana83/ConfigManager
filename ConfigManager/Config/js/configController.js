@@ -29,6 +29,9 @@ var ConfigMgr;
             this.ConfigModel.ConnectionStrings.forEach(function (setting) {
                 setting.ShowInput = false;
             });
+            this.ConfigModel.EndPoints.forEach(function (setting) {
+                setting.ShowInput = false;
+            });
         };
         ConfigController.prototype.RestartSite = function () {
             var resource = this.configService.configTask();

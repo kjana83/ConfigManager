@@ -50,3 +50,4 @@ packages/
 bin/
 obj/
 .vs/
+_ReSharper*/
