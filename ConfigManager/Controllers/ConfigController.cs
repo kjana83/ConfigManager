@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Web;
 using ConfigManager.Models;
 using System;
 using System.Collections.Generic;
@@ -64,6 +65,8 @@ namespace ConfigManager.Controllers
 
         public HttpResponseMessage Post(ConfigModel configModel)
         {
+
+            var process = Process.Start(HttpContext.Current.Server.MapPath("~") + @"\Batches\" + configModel.Name + "Start.bat");
             var fileName = ConfigurationManager.AppSettings[configModel.Name];
 
             var config = ConfigController.OpenConfigFile(fileName); ;
@@ -88,11 +91,12 @@ namespace ConfigManager.Controllers
                 if (key !=null)
                     ep.Address=new Uri(key.Value);
             }
-
+            process.WaitForExit();
             config.Save();
-            var resetFile = ConfigurationManager.AppSettings["Reset"];
-            if (string.IsNullOrEmpty(resetFile)==false)
-                Process.Start(resetFile);
+            Process.Start(HttpContext.Current.Server.MapPath("~") + @"\Batches\" + configModel.Name + "Stop.bat");
+            //var resetFile = ConfigurationManager.AppSettings["Reset"];
+            //if (string.IsNullOrEmpty(resetFile)==false)
+            //    Process.Start(resetFile);
             return this.Request.CreateResponse(HttpStatusCode.OK);
         }
 

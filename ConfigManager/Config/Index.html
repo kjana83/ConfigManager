@@ -7,6 +7,8 @@
     <link href="/Content/bootstrap.css" rel="stylesheet" />
     <link href="/Content/Site.css" rel="stylesheet" />
 
+    <script src="/scripts/jquery-1.10.2.js"></script>
+    <script src="/scripts/bootstrap.js"></script>
     <script src="/scripts/angular.js"></script>
     <script src="/scripts/angular-resource.js"></script>
     <script src="/scripts/angular-mocks.js"></script>
@@ -18,72 +20,108 @@
     <script src="js/application.js"></script>
 </head>
 
-<body ng-app="ConfigMgr">
+<body ng-app="ConfigMgr" ng-controller="configController as vm">
     <div class="navbar navbar-default navbar-fixed-top">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <div class="container">
+        <div class="container-fluid">
             <div class="navbar-header">
-
                 <a class="navbar-brand">Config Manager</a>
             </div>
         </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Batches <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" ng-click="vm.RunBatch('Claim')">Claims</a></li>
+                        <li><a href="#" ng-click="vm.RunBatch('Invoice')">Invoice</a></li>
+                        <li><a href="#" ng-click="vm.RunBatch('Payment')">Payment</a></li>
+                        <li><a href="#" ng-click="vm.RunBatch('Warehouse')">Warehouse</a></li>
+                        <li><a href="#" ng-click="vm.RunBatch('ERemittence')">ERemittence</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tasks <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" ng-click="vm.RestartSite()">Reset IIS</a></li>
+                        <li><a href="#" ng-click="vm.ClearCache()">Clear Cache</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="container body-content" ng-controller="configController as vm">
+    <div class="container body-content">
         <div class="dropdown">
             <select class="form-control" ng-change="vm.SelectFile()" ng-model="vm.ConfigModel.Name" ng-options="file for file in vm.File">
             </select>
         </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">End Points</h3>
-            </div>
-            <div class="panel-body">
-
-                <div class="input-group row" ng-repeat="endPoint in vm.ConfigModel.EndPoints">
-                    <label data-ng-bind="endPoint.Name" ng-init="endPoint.ShowInput=false" id="name" class="input-group-addon"></label>
-                    <label ng-class="endPoint.ShowInput?'hide':'show'" class="form-control"  data-ng-click="endPoint.ShowInput=true" data-ng-bind="endPoint.Value"></label>
-                    <input type="text" class="form-control" ng-class="endPoint.ShowInput?'show':'hide'" aria-describedby="name" data-ng-model="endPoint.Value">
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">End Points</a>
+                    </h3>
+                    <!--<h3 class="panel-title" data-toggle="collapse" data-target="#ep">End Points</h3>-->
                 </div>
+                <div id="collapse1" class="panel-collapse collapse in">
+                    <div class="panel-body">
 
-            </div>
-        </div>
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">App Settings</h3>
-            </div>
-            <div class="panel-body">
+                        <div class="input-group row" ng-repeat="endPoint in vm.ConfigModel.EndPoints">
+                            <label data-ng-bind="endPoint.Name" ng-init="endPoint.ShowInput=false" id="name" class="input-group-addon"></label>
+                            <label ng-class="endPoint.ShowInput?'hide':'show'" class="form-control" data-ng-click="endPoint.ShowInput=true" data-ng-bind="endPoint.Value"></label>
+                            <input type="text" class="form-control" ng-class="endPoint.ShowInput?'show':'hide'" aria-describedby="name" data-ng-model="endPoint.Value">
+                        </div>
 
-                <div class="input-group row small" ng-repeat="appSettings in vm.ConfigModel.AppSettings">
-                    <label data-ng-bind="appSettings.Name" ng-init="appSettings.ShowInput=false" id="name" class="input-group-addon"></label>
-                    <label ng-class="appSettings.ShowInput?'hide':'show'" class="form-control"  data-ng-click="appSettings.ShowInput=true" data-ng-bind="appSettings.Value"></label>
-                    <input type="text" class="form-control" ng-class="appSettings.ShowInput?'show':'hide'" aria-describedby="name" data-ng-model="appSettings.Value">
+                    </div>
                 </div>
-
             </div>
-        </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">App Settings</a>
+                    </h3>
+                </div>
+                <div id="collapse2" class="panel-collapse collapse">
+                    <div class="panel-body">
 
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <h3 class="panel-title">Connection Strings</h3>
+                        <div class="input-group row small" ng-repeat="appSettings in vm.ConfigModel.AppSettings">
+                            <label data-ng-bind="appSettings.Name" ng-init="appSettings.ShowInput=false" id="name" class="input-group-addon"></label>
+                            <label ng-class="appSettings.ShowInput?'hide':'show'" class="form-control" data-ng-click="appSettings.ShowInput=true" data-ng-bind="appSettings.Value"></label>
+                            <input type="text" class="form-control" ng-class="appSettings.ShowInput?'show':'hide'" aria-describedby="name" data-ng-model="appSettings.Value">
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="panel-body">
-                <div class="input-group row" ng-repeat="connStrings in vm.ConfigModel.ConnectionStrings">
-                    <label data-ng-bind="connStrings.Name" ng-init="connStrings.ShowInput=false" id="name" class="input-group-addon"></label>
-                    <label ng-class="connStrings.ShowInput?'hide':'show'" class="form-control"  data-ng-click="connStrings.ShowInput=true" data-ng-bind="connStrings.Value"></label>
-                    <input type="text" ng-class="connStrings.ShowInput?'show':'hide'" class="form-control" aria-describedby="name" data-ng-model="connStrings.Value">
-                    
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Connection Strings</a>
+                    </h3>
+                </div>
+                <div id="collapse3" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="input-group row" ng-repeat="connStrings in vm.ConfigModel.ConnectionStrings">
+                            <label data-ng-bind="connStrings.Name" ng-init="connStrings.ShowInput=false" id="name" class="input-group-addon"></label>
+                            <label ng-class="connStrings.ShowInput?'hide':'show'" class="form-control" data-ng-click="connStrings.ShowInput=true" data-ng-bind="connStrings.Value"></label>
+                            <input type="text" ng-class="connStrings.ShowInput?'show':'hide'" class="form-control" aria-describedby="name" data-ng-model="connStrings.Value">
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="well">
-            <button type="submit" class="btn btn-success"  ng-click="vm.SaveConfig()">Save</button>
-        
+            <button type="submit" class="btn btn-success" ng-click="vm.SaveConfig()">Save</button>
+
             <button type="button" class="btn btn-info" style="margin-left:450px;" ng-click="vm.RestartSite()">Reset IIS</button>
-      
+
             <button type="button" class="btn btn-warning" style="float:right" ng-click="vm.ClearCache()">Clear Cache</button>
         </div>
     </div>
